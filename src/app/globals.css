@@ -26,12 +26,3 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-
-.toast {
-  @apply px-4 py-2 rounded shadow-lg border-l-4 flex justify-between items-center;
-}
-
-.toast-message {
-  @apply mr-4;
-}
-

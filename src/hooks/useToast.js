@@ -1,62 +1,62 @@
 "use client";
 
-import Toast from '@/components/Toast';
 import { createContext, useContext, useState, useCallback } from 'react';
+import Toast from '@/components/Toast';
 
 const ToastContext = createContext();
 
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
-    const [toastPosition, setToastPosition] = useState('top-right');
 
-
-
-
-    // toastsFade='animate-fade-in-down'
-    const addToast = useCallback((type, message, position = 'top-right', toastsFade = 'animate-fade-in-down', toast_id) => {
-        let positionClass = '';
-        switch (position) {
-            case 'top-left':
-                positionClass = 'top-5 left-5';
-                break;
-            case 'top-right':
-                positionClass = 'top-5 right-5';
-                break;
-            case 'bottom-right':
-                positionClass = 'bottom-5 right-5';
-                break;
-            case 'bottom-left':
-                positionClass = 'bottom-5 left-5';
-                break;
-            default:
-                positionClass = 'top-5 right-5';
-        }
-
+    const addToast = useCallback((type, message, position = 'top-right', toastsFade = 'animate-fade-in-down') => {
         const id = Math.random().toString(36).substr(2, 9);
-        setToasts((prev) => [...prev, { id, type, message, position, toastsFade, toast_id }], setToastPosition(positionClass));
+        setToasts((prev) => [...prev, { id, type, message, position, toastsFade }]);
+
         setTimeout(() => {
             setToasts((prev) => prev.map((toast) => toast.id === id ? { ...toast, toastsFade: 'animate-fade-out-up' } : toast));
-            setToasts((prev) => prev.filter((toast) => toast.id !== id));
-        }, 40000);
+            setTimeout(() => {
+                setToasts((prev) => prev.filter((toast) => toast.id !== id));
+            }, 300); // match the fade-out animation duration
+        }, 4000);
     }, []);
 
     const removeToast = useCallback((id) => {
         setToasts((prev) => prev.map((toast) => toast.id === id ? { ...toast, toastsFade: 'animate-fade-out-up' } : toast));
         setTimeout(() => {
             setToasts((prev) => prev.filter((toast) => toast.id !== id));
-        }, 300);
+        }, 300); // match the fade-out animation duration
     }, []);
 
-    console.log({ toastPosition });
+    const getPositionClass = (position) => {
+        switch (position) {
+            case 'top-left':
+                return 'top-5 left-5';
+            case 'top-right':
+                return 'top-5 right-5';
+            case 'bottom-right':
+                return 'bottom-5 right-5';
+            case 'bottom-left':
+                return 'bottom-5 left-5';
+            default:
+                return 'top-5 right-5';
+        }
+    };
+
     return (
         <ToastContext.Provider value={{ addToast, removeToast }}>
-            <div className={`m-5 fixed top-5 right-5 ${toastPosition}`}>
-                {toasts.map((toast) => (
-                    <>
-                        <Toast type={toast.type} message={toast.message} onClose={() => removeToast(toast.id)} key={toast.message} toastsFade={toast.toastsFade} toast_id={toast.toast_id} />
-                    </>
-                ))}
-            </div>
+            {['top-left', 'top-right', 'bottom-right', 'bottom-left'].map((position) => (
+                <div key={position} className={`fixed z-50 flex flex-col space-y-2 ${getPositionClass(position)}`}>
+                    {toasts.filter(toast => toast.position === position).map((toast) => (
+                        <Toast
+                            key={toast.id}
+                            type={toast.type}
+                            message={toast.message}
+                            onClose={() => removeToast(toast.id)}
+                            toastsFade={toast.toastsFade}
+                        />
+                    ))}
+                </div>
+            ))}
             {children}
         </ToastContext.Provider>
     );

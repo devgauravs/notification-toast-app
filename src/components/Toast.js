@@ -1,4 +1,4 @@
-import { CheckIcon, CloseIcon, InfoIcon } from "./Icons";
+import { CheckIcon, CloseIcon, InfoIcon, WornIcon } from "./Icons";
 
 const Toast = ({ type, message, onClose, toastsFade, toast_id, position }) => {
 
@@ -13,7 +13,7 @@ const Toast = ({ type, message, onClose, toastsFade, toast_id, position }) => {
     const typeIcons = {
         success: <CheckIcon />,
         error: <CloseIcon />,
-        warning: <InfoIcon />,
+        warning: <WornIcon />,
         info: <InfoIcon />,
     };
 
@@ -50,7 +50,7 @@ const Toast = ({ type, message, onClose, toastsFade, toast_id, position }) => {
 
         <>
 
-            <div id={toast_id} className={`flex items-center w-full ${position} rtl:divide-x-reverse  ${typeClasses[type]} ${toastsFade} max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 `} role="alert">
+            <div id={toast_id} className={`flex items-center w-full  ${typeClasses[type]} ${toastsFade} max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 `} role="alert">
                 <div className={`inline-flex items-center justify-center flex-shrink-0 w-8 h-8 ${typeTextClasses[type]} ${typeBgClasses[type]} rounded-lg ${typeDarkBgClasses[type]} ${typeDarkTextClasses[type]}`}>
                     {typeIcons[type]}
                 </div>
